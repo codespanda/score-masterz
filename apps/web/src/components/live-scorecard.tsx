@@ -48,7 +48,16 @@ function describeBall(b: BallEvent, name: (id: string) => string): string {
   const who = `${name(b.bowlerId)} to ${name(b.strikerId)}`;
   if (b.wicket) {
     const out = name(b.wicket.playerOutId);
-    return `${who}, OUT! ${out} ${b.wicket.kind === "runout" ? "run out" : b.wicket.kind}.`;
+    const how: Record<string, string> = {
+      bowled: "bowled",
+      caught: b.wicket.fielderId ? `caught by ${name(b.wicket.fielderId)}` : "caught",
+      lbw: "LBW",
+      runout: b.wicket.fielderId ? `run out by ${name(b.wicket.fielderId)}` : "run out",
+      stumped: "stumped",
+      hitwicket: "hit wicket",
+      retired: "retired",
+    };
+    return `${who}, OUT! ${out} ${how[b.wicket.kind]}.`;
   }
   if (b.extra?.type === "wide") return `${who}, wide${b.extra.runs > 1 ? ` (${b.extra.runs} runs)` : ""}.`;
   if (b.extra?.type === "noball") return `${who}, no ball${b.runs ? `, ${b.runs} off the bat` : ""}.`;
@@ -233,9 +242,24 @@ function InningsCard({
   const dismissal = (id: string) => {
     const d = s.batters.find((b) => b.playerId === id)?.dismissal;
     if (!d) return id === s.strikerId || id === s.nonStrikerId ? "batting" : "not out";
-    if (d.kind === "runout") return "run out";
-    if (d.kind === "retired") return "retired";
-    return `${d.kind === "bowled" ? "b" : `${d.kind} b`} ${name(d.bowlerId)}`;
+    const bowler = name(d.bowlerId);
+    const fielder = d.fielderId ? name(d.fielderId) : null;
+    switch (d.kind) {
+      case "bowled":
+        return `b ${bowler}`;
+      case "caught":
+        return fielder === bowler ? `c & b ${bowler}` : `c ${fielder ?? "?"} b ${bowler}`;
+      case "stumped":
+        return `st ${fielder ?? "?"} b ${bowler}`;
+      case "lbw":
+        return `lbw b ${bowler}`;
+      case "hitwicket":
+        return `hit wicket b ${bowler}`;
+      case "runout":
+        return fielder ? `run out (${fielder})` : "run out";
+      case "retired":
+        return "retired";
+    }
   };
 
   return (

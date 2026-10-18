@@ -25,8 +25,12 @@ export const battingOrder = [
   { id: 'rx-11', name: 'B. Hale' },
 ];
 
-export const currentBowler = { id: 'nf-11', name: 'R. Patel' };
+export const bowlingSquad = [
+  { id: 'nf-1', name: 'H. Nguyen' },
+  { id: 'nf-2', name: 'E. Ward' },
+  { id: 'nf-3', name: 'V. Costa' },
+  { id: 'nf-4', name: 'S. Ahmed' },
+  { id: 'nf-5', name: 'J. Diaz' },
+  { id: 'nf-11', name: 'R. Patel' },
+];
 
-export function playerName(id: string | undefined): string {
-  return battingOrder.find((p) => p.id === id)?.name ?? '—';
-}

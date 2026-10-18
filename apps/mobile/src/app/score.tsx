@@ -8,7 +8,6 @@ import {
   saveBall,
   startMatch,
   type LiveMatch,
-  type Player,
   type Team,
 } from '@score-masterz/data';
 import type { BallEvent } from '@score-masterz/scoring';
@@ -24,7 +23,7 @@ import { Notice, SessionNotice } from '@/components/notice';
 import { Scoreboard, type Person } from '@/components/scoreboard';
 import { BottomTabInset } from '@/constants/theme';
 import { useSession } from '@/hooks/use-session';
-import { battingOrder as demoBatting, currentBowler as demoBowler, demoMatch, demoRules } from '@/lib/demo-match';
+import { battingOrder as demoBatting, bowlingSquad as demoBowling, demoMatch, demoRules } from '@/lib/demo-match';
 
 export default function ScoreScreen() {
   const session = useSession();
@@ -48,8 +47,8 @@ function DemoScoring() {
       subtitle="Demo mode · not saved"
       rules={demoRules}
       balls={balls}
-      battingOrder={demoBatting}
-      bowler={demoBowler}
+      battingSquad={demoBatting}
+      bowlingSquad={demoBowling}
       chase={{ firstInningsRuns: demoMatch.firstInningsRuns, battingTeam: demoMatch.battingTeam, bowlingTeam: demoMatch.bowlingTeam }}
       onRecord={(ball) => setBalls((prev) => [...prev, { ...ball, id: randomUUID() }])}
       onUndo={() => setBalls((prev) => prev.slice(0, -1))}
@@ -61,12 +60,8 @@ interface Lineup {
   match: LiveMatch;
   batting: Team;
   bowling: Team;
-  battingOrder: Person[];
-  bowler: Person;
-}
-
-function pickBowler(players: Player[]): Person | undefined {
-  return players.find((p) => p.role === 'bowler') ?? players.find((p) => p.role === 'all_rounder') ?? players[0];
+  battingSquad: Person[];
+  bowlingSquad: Person[];
 }
 
 async function loadLineup(client: SupabaseClient, match: LiveMatch, teams: Team[]): Promise<Lineup> {
@@ -77,9 +72,8 @@ async function loadLineup(client: SupabaseClient, match: LiveMatch, teams: Team[
     listPlayers(client, batting.id),
     listPlayers(client, bowling.id),
   ]);
-  const bowler = pickBowler(bowlingPlayers);
-  if (battingPlayers.length < 2 || !bowler) throw new Error('Each side needs players: 2 to bat, 1 to bowl.');
-  return { match, batting, bowling, battingOrder: battingPlayers, bowler };
+  if (battingPlayers.length < 2 || bowlingPlayers.length < 1) throw new Error('Each side needs players: 2 to bat, 1 to bowl.');
+  return { match, batting, bowling, battingSquad: battingPlayers, bowlingSquad: bowlingPlayers };
 }
 
 /** Scoring against Supabase: every ball is saved to the `balls` table as it is recorded. */
@@ -161,12 +155,13 @@ function SavedScoring({ client, userId }: { client: SupabaseClient; userId: stri
 
   return (
     <Scoreboard
+      key={match.matchId}
       title={`${batting.name} vs ${bowling.name}`}
       subtitle={saving ? 'Saving…' : 'Saved to Supabase'}
       rules={match.rules}
       balls={balls}
-      battingOrder={lineup.battingOrder}
-      bowler={lineup.bowler}
+      battingSquad={lineup.battingSquad}
+      bowlingSquad={lineup.bowlingSquad}
       busy={saving}
       banner={
         error ? (
