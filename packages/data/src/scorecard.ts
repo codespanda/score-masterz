@@ -21,6 +21,7 @@ export interface InningsRef {
 
 export interface MatchSummary {
   id: string;
+  ownerId: string;
   status: MatchStatus;
   venue: string | null;
   scheduledAt: string | null;
@@ -44,6 +45,7 @@ interface TeamRow {
 
 interface MatchRow {
   id: string;
+  owner_id: string;
   status: MatchStatus;
   venue: string | null;
   scheduled_at: string | null;
@@ -54,7 +56,7 @@ interface MatchRow {
 }
 
 const MATCH_COLUMNS =
-  "id, status, venue, scheduled_at, rules, " +
+  "id, owner_id, status, venue, scheduled_at, rules, " +
   "team_a:teams!matches_team_a_id_fkey(id, name, short_code, color), " +
   "team_b:teams!matches_team_b_id_fkey(id, name, short_code, color), " +
   "innings(id, number, batting_team_id, bowling_team_id)";
@@ -65,6 +67,7 @@ function toSummary(row: MatchRow): MatchSummary {
   if (!row.team_a || !row.team_b) throw new Error("Match is missing a team.");
   return {
     id: row.id,
+    ownerId: row.owner_id,
     status: row.status,
     venue: row.venue,
     scheduledAt: row.scheduled_at,
