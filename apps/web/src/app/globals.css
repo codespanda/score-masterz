@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* Mirrors packages/tokens. */
+@theme inline {
+  --color-ground: #f3f5f1;
+  --color-surface: #ffffff;
+  --color-ink: #0e1a13;
+  --color-ink-soft: #3c4a42;
+  --color-muted: #5a6b61;
+  --color-line: #dce3dd;
+  --color-line-soft: #eaefeb;
+  --color-pitch: #0b5d3b;
+  --color-pitch-tint: #e7f0ea;
+  --color-scoreboard: #08291c;
+  --color-scoreboard-raised: #0b3d29;
+  --color-on-board-muted: #9fb5a9;
+  --color-on-board-soft: #c9d8cf;
+  --color-gold: #f2b705;
+  --color-gold-tint: #fdf3d0;
+  --color-gold-ink: #6b4e00;
+  --color-live: #e2531b;
+  --color-wicket: #b42318;
+
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-display: var(--font-barlow), sans-serif;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
