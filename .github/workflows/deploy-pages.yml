@@ -31,11 +31,11 @@ jobs:
 
       - name: Check Supabase settings
         env:
-          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "::error::Add SUPABASE_URL and SUPABASE_ANON_KEY under Settings → Secrets and variables → Actions → Variables."
+            echo "::error::Add SUPABASE_URL and SUPABASE_ANON_KEY under Settings → Secrets and variables → Actions (Variables or Secrets tab, repository level)."
             exit 1
           fi
 
@@ -48,8 +48,8 @@ jobs:
       - name: Build web app
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
         run: npm run build --workspace=web
 
       # Mobile app's web build under /app
@@ -57,8 +57,8 @@ jobs:
         working-directory: apps/mobile
         env:
           EXPO_BASE_URL: ${{ steps.pages.outputs.base_path }}/app
-          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
         run: npx expo export --platform web
 
       - name: Assemble site
