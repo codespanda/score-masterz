@@ -18,7 +18,8 @@ export function getSupabase(): SupabaseClient | null {
       storage: isServer ? undefined : AsyncStorage,
       persistSession: !isServer,
       autoRefreshToken: !isServer,
-      detectSessionInUrl: false,
+      // On web, email links (sign-up verification, password reset) come back with the session in the URL.
+      detectSessionInUrl: Platform.OS === 'web' && !isServer,
     },
   });
 

@@ -31,7 +31,8 @@ export async function uploadTeamLogo(
       throw new Error("Logo storage isn't set up yet. Run the team_logos migration in the Supabase SQL editor.");
     }
     if (/row-level security|unauthorized|403/i.test(upload.error.message)) {
-      throw new Error("Only the team's creator can change its logo.");
+      // Keep Supabase's wording too, so a policy problem isn't mistaken for a permissions one.
+      throw new Error(`Only the team's creator can change its logo (${upload.error.message}).`);
     }
     throw new Error(`Uploading logo: ${upload.error.message}`);
   }

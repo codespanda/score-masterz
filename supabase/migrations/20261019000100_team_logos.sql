@@ -17,17 +17,17 @@ create policy "team logos are public" on storage.objects for select
 create policy "team owner uploads logo" on storage.objects for insert
   with check (
     bucket_id = 'team-logos'
-    and exists (select 1 from public.teams t where t.id::text = (storage.foldername(name))[1] and t.owner_id = auth.uid())
+    and exists (select 1 from public.teams t where t.id::text = (storage.foldername(objects.name))[1] and t.owner_id = auth.uid())
   );
 
 create policy "team owner updates logo" on storage.objects for update
   using (
     bucket_id = 'team-logos'
-    and exists (select 1 from public.teams t where t.id::text = (storage.foldername(name))[1] and t.owner_id = auth.uid())
+    and exists (select 1 from public.teams t where t.id::text = (storage.foldername(objects.name))[1] and t.owner_id = auth.uid())
   );
 
 create policy "team owner deletes logo" on storage.objects for delete
   using (
     bucket_id = 'team-logos'
-    and exists (select 1 from public.teams t where t.id::text = (storage.foldername(name))[1] and t.owner_id = auth.uid())
+    and exists (select 1 from public.teams t where t.id::text = (storage.foldername(objects.name))[1] and t.owner_id = auth.uid())
   );

@@ -4,3 +4,4 @@ export * from "./matches";
 export * from "./balls";
 export * from "./scorecard";
 export * from "./logos";
+export * from "./account";

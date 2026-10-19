@@ -1,12 +1,14 @@
 import Link from "next/link";
 
+import { AccountLink } from "@/components/account-link";
+
 const NAV = [
   { href: "/", label: "Dashboard" },
   { href: "/matches", label: "Live matches" },
   { href: "/teams", label: "Teams" },
 ] as const;
 
-export function SiteHeader({ active }: { active: (typeof NAV)[number]["href"] }) {
+export function SiteHeader({ active }: { active: (typeof NAV)[number]["href"] | "/account" }) {
   return (
     <header className="bg-scoreboard text-white">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-4 px-6 py-3.5">
@@ -36,6 +38,7 @@ export function SiteHeader({ active }: { active: (typeof NAV)[number]["href"] })
         >
           Open scorer app
         </a>
+        <AccountLink />
       </div>
     </header>
   );
