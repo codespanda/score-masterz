@@ -10,6 +10,7 @@ export interface TeamRef {
   name: string;
   shortCode: string;
   color: string;
+  logoUrl: string | null;
 }
 
 export interface InningsRef {
@@ -41,6 +42,7 @@ interface TeamRow {
   name: string;
   short_code: string;
   color: string;
+  logo_url: string | null;
 }
 
 interface MatchRow {
@@ -57,11 +59,11 @@ interface MatchRow {
 
 const MATCH_COLUMNS =
   "id, owner_id, status, venue, scheduled_at, rules, " +
-  "team_a:teams!matches_team_a_id_fkey(id, name, short_code, color), " +
-  "team_b:teams!matches_team_b_id_fkey(id, name, short_code, color), " +
+  "team_a:teams!matches_team_a_id_fkey(id, name, short_code, color, logo_url), " +
+  "team_b:teams!matches_team_b_id_fkey(id, name, short_code, color, logo_url), " +
   "innings(id, number, batting_team_id, bowling_team_id)";
 
-const toTeam = (t: TeamRow): TeamRef => ({ id: t.id, name: t.name, shortCode: t.short_code, color: t.color });
+const toTeam = (t: TeamRow): TeamRef => ({ id: t.id, name: t.name, shortCode: t.short_code, color: t.color, logoUrl: t.logo_url });
 
 function toSummary(row: MatchRow): MatchSummary {
   if (!row.team_a || !row.team_b) throw new Error("Match is missing a team.");

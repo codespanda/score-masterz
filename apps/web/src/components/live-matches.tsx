@@ -70,7 +70,7 @@ export function LiveMatches() {
               {[m.teamA, m.teamB].map((t) => (
                 <span key={t.id} className="flex items-center justify-between gap-3">
                   <span className="flex items-center gap-2.5 font-bold">
-                    <TeamBadge code={t.shortCode} color={t.color} size={32} />
+                    <TeamBadge code={t.shortCode} color={t.color} logoUrl={t.logoUrl} size={32} />
                     {t.name}
                   </span>
                   {s && t.id === batting.id && (

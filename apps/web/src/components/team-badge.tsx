@@ -1,4 +1,28 @@
-export function TeamBadge({ code, color, size = 36 }: { code: string; color: string; size?: number }) {
+export function TeamBadge({
+  code,
+  color,
+  logoUrl,
+  size = 36,
+}: {
+  code: string;
+  color: string;
+  logoUrl?: string | null;
+  size?: number;
+}) {
+  if (logoUrl) {
+    return (
+      // Plain <img>: logos are already optimised WebP and the site is a static export.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={logoUrl}
+        alt=""
+        width={size}
+        height={size}
+        className="shrink-0 rounded-[10px] bg-white object-contain"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
   return (
     <span
       className="grid shrink-0 place-items-center rounded-[10px] font-display font-bold text-white"

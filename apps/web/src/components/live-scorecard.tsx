@@ -168,7 +168,7 @@ export function LiveScorecard({ matchId }: { matchId: string }) {
               const isCurrent = inn.id === current?.id;
               return (
                 <div key={inn.id} className="flex items-center gap-3">
-                  <TeamBadge code={t.shortCode} color={t.color} size={44} />
+                  <TeamBadge code={t.shortCode} color={t.color} logoUrl={t.logoUrl} size={44} />
                   <div>
                     <div className={`text-[13px] font-bold ${isCurrent && live ? "text-gold" : "text-on-board-muted"}`}>
                       {t.name.toUpperCase()}

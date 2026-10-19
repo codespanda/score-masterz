@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TeamBadge } from '@/components/team-badge';
 import { Notice, SessionNotice } from '@/components/notice';
 import { Scoreboard, type Person } from '@/components/scoreboard';
 import { BottomTabInset } from '@/constants/theme';
@@ -246,9 +247,7 @@ function MatchSetup({
             accessibilityLabel={`${label}: ${t.name}`}
             accessibilityState={{ selected: on, disabled: !enough }}
             style={[styles.teamRow, on && styles.teamRowOn, !enough && styles.faded]}>
-            <View style={[styles.badge, { backgroundColor: t.color }]}>
-              <Text style={styles.badgeText}>{t.shortCode}</Text>
-            </View>
+            <TeamBadge code={t.shortCode} color={t.color} logoUrl={t.logoUrl} size={36} />
             <Text style={styles.teamName}>{t.name}</Text>
             <Text style={styles.muted}>{enough ? `${t.playerCount} player${t.playerCount === 1 ? '' : 's'}` : `needs ${minPlayers}+ players`}</Text>
           </Pressable>

@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TeamBadge } from '@/components/team-badge';
 import { Notice } from '@/components/notice';
 import { BottomTabInset } from '@/constants/theme';
 import { useSession } from '@/hooks/use-session';
@@ -126,9 +127,7 @@ function MatchCard({ match, balls, mine }: { match: MatchSummary; balls: Record<
         return (
           <View key={t.id} style={styles.rowBetween}>
             <View style={styles.teamCell}>
-              <View style={[styles.badge, { backgroundColor: t.color }]}>
-                <Text style={styles.badgeText}>{t.shortCode}</Text>
-              </View>
+              <TeamBadge code={t.shortCode} color={t.color} logoUrl={t.logoUrl} size={32} />
               <Text style={batting ? styles.team : styles.mutedTeam}>{t.name}</Text>
             </View>
             {batting && summary && (
