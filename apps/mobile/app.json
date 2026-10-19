@@ -8,7 +8,8 @@
     "scheme": "scoremasterz",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.codespanda.scoremasterz"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +18,9 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.codespanda.scoremasterz",
+      "versionCode": 1
     },
     "web": {
       "output": "static",
@@ -31,6 +34,14 @@
           "backgroundColor": "#08291C",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Score Masterz uses your photos to set a team logo.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ]
     ],
