@@ -6,7 +6,7 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { Pressable, type PressableProps, View, StyleSheet } from 'react-native';
+import { Pressable, type PressableProps, View, StyleSheet, useWindowDimensions } from 'react-native';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 
@@ -53,12 +53,16 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
 }
 
 export function CustomTabList(props: TabListProps) {
+  // On phone-width screens the four tabs need the whole bar.
+  const narrow = useWindowDimensions().width < 480;
   return (
     <View {...props} style={styles.tabListContainer}>
       <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Score Masterz
-        </ThemedText>
+        {!narrow && (
+          <ThemedText type="smallBold" style={styles.brandText}>
+            Score Masterz
+          </ThemedText>
+        )}
 
         {props.children}
       </ThemedView>
@@ -79,7 +83,8 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
+    paddingHorizontal: Spacing.three,
+    justifyContent: 'space-between',
     borderRadius: Spacing.five,
     flexDirection: 'row',
     alignItems: 'center',

@@ -4,24 +4,26 @@ import { MIN_PASSWORD_LENGTH, setPassword, startSignup, verifySignupCode } from 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
-import { Alert, AuthCard, inputClass, labelClass, primaryBtn } from "@/components/auth-ui";
+import {
+  Alert,
+  AuthHeading,
+  AuthLayout,
+  CodeInput,
+  PasswordInput,
+  Steps,
+  inputClass,
+  labelClass,
+  primaryBtn,
+} from "@/components/auth-ui";
 import { siteUrl, useAccount } from "@/hooks/use-account";
 
-function Steps({ current }: { current: 1 | 2 | 3 }) {
-  const steps = ["Your details", "Verify email", "Password"];
-  return (
-    <ol aria-label="Sign-up steps" className="flex gap-2 text-[13px] font-bold">
-      {steps.map((label, i) => (
-        <li
-          key={label}
-          aria-current={i + 1 === current ? "step" : undefined}
-          className={`flex-1 rounded-lg px-2 py-2 text-center ${i + 1 === current ? "bg-pitch text-white" : i + 1 < current ? "bg-pitch-tint text-pitch" : "bg-ground text-muted"}`}
-        >
-          {i + 1}. {label}
-        </li>
-      ))}
-    </ol>
-  );
+/** 0–4 bars: length plus a mix of letters, digits and symbols. */
+function strength(pw: string): { bars: number; label: string } {
+  if (!pw) return { bars: 0, label: `At least ${MIN_PASSWORD_LENGTH} characters` };
+  if (pw.length < MIN_PASSWORD_LENGTH) return { bars: 1, label: `Too short · at least ${MIN_PASSWORD_LENGTH} characters` };
+  const kinds = [/[a-z]/, /[A-Z]/, /\d/, /[^A-Za-z0-9]/].filter((r) => r.test(pw)).length;
+  const bars = Math.min(4, 1 + kinds - (pw.length < 12 ? 1 : 0));
+  return { bars: Math.max(2, bars), label: bars >= 4 ? "Strong" : bars === 3 ? "Good" : "OK · add numbers or symbols" };
 }
 
 export function SignupForm() {
@@ -49,17 +51,56 @@ export function SignupForm() {
     }
   }
 
-  if (!supabase) return <AuthCard title="Sign up"><Alert tone="info">Supabase is not configured.</Alert></AuthCard>;
-  if (account === undefined) return <AuthCard title="Sign up"><p className="text-muted">Loading…</p></AuthCard>;
+  if (!supabase) {
+    return (
+      <AuthLayout variant="signup">
+        <Alert tone="info">Supabase is not configured.</Alert>
+      </AuthLayout>
+    );
+  }
+  if (account === undefined) {
+    return (
+      <AuthLayout variant="signup">
+        <p className="text-muted">Loading…</p>
+      </AuthLayout>
+    );
+  }
 
   const pending = sentTo ?? account?.pendingEmail ?? null;
+  const messages = (
+    <>
+      {error && <Alert tone="error">{error}</Alert>}
+      {info && <Alert tone="success">{info}</Alert>}
+    </>
+  );
 
-  // Step 3: email verified (by code here, or by the link which brings them back to this page).
-  if (account && !account.isGuest && account.needsPassword) {
+  // Done.
+  if (account && !account.isGuest && !account.needsPassword) {
     return (
-      <AuthCard title="Choose a password" subtitle={`Email verified: ${account.email}`}>
+      <AuthLayout variant="signup">
+        <span className="grid h-[72px] w-[72px] place-items-center rounded-full bg-pitch">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#F2B705" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 12l5 5 9-10" />
+          </svg>
+        </span>
+        <AuthHeading title={account.name ? `You're in, ${account.name.split(" ")[0]}` : "You're in"}>
+          Your account is ready. Your teams and matches are saved to it, so you can log in on any device.
+        </AuthHeading>
+        <Link href="/teams/" className={`${primaryBtn} grid place-items-center`}>Go to my teams</Link>
+      </AuthLayout>
+    );
+  }
+
+  // Step 3: email verified (by code here, or by the email link which returns to this page).
+  if (account && !account.isGuest && account.needsPassword) {
+    const s = strength(password);
+    return (
+      <AuthLayout variant="signup">
         <Steps current={3} />
-        {error && <Alert tone="error">{error}</Alert>}
+        <AuthHeading title="Choose a password">
+          <span className="font-bold text-pitch">✓ Email verified</span> · {account.email}
+        </AuthHeading>
+        {messages}
         <form
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
@@ -71,41 +112,45 @@ export function SignupForm() {
           className="flex flex-col gap-4"
         >
           <label className={labelClass}>
-            Password (at least {MIN_PASSWORD_LENGTH} characters)
-            <input className={inputClass} type="password" autoComplete="new-password" value={password} onChange={(e) => setPw(e.target.value)} required minLength={MIN_PASSWORD_LENGTH} />
+            Password
+            <PasswordInput autoComplete="new-password" value={password} onChange={(e) => setPw(e.target.value)} required minLength={MIN_PASSWORD_LENGTH} />
           </label>
+          <div className="flex flex-col gap-1.5" aria-live="polite">
+            <div className="grid grid-cols-4 gap-1.5" aria-hidden="true">
+              {[1, 2, 3, 4].map((i) => (
+                <span key={i} className={`h-1.5 rounded-full ${i <= s.bars ? (s.bars <= 1 ? "bg-wicket" : "bg-pitch") : "bg-line"}`} />
+              ))}
+            </div>
+            <span className={`text-[13px] font-bold ${s.bars <= 1 ? "text-muted" : "text-pitch"}`}>{s.label}</span>
+          </div>
           <label className={labelClass}>
             Confirm password
-            <input className={inputClass} type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+            <PasswordInput autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
           </label>
           <button type="submit" disabled={busy} className={primaryBtn}>
             {busy ? "Saving…" : "Finish sign-up"}
           </button>
         </form>
-      </AuthCard>
-    );
-  }
-
-  // Done.
-  if (account && !account.isGuest) {
-    return (
-      <AuthCard title="You're signed up" subtitle={account.email ?? undefined}>
-        <Alert tone="success">
-          Your account is ready{account.name ? `, ${account.name}` : ""}. Your teams and matches are saved to it, so you can log in on any device.
-        </Alert>
-        <Link href="/teams/" className="font-bold text-pitch">Go to your teams →</Link>
-      </AuthCard>
+      </AuthLayout>
     );
   }
 
   // Step 2: waiting for the email to be verified.
   if (pending) {
     return (
-      <AuthCard title="Check your email" subtitle={<>We sent a verification email to <strong className="text-ink">{pending}</strong>.</>}>
+      <AuthLayout variant="signup">
         <Steps current={2} />
-        {error && <Alert tone="error">{error}</Alert>}
-        {info && <Alert tone="success">{info}</Alert>}
-        <p className="text-sm text-ink-soft">Click the link in the email, or enter the 6-digit code if the email shows one.</p>
+        <span className="grid h-16 w-16 place-items-center rounded-[18px] bg-gold-tint">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A6400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="M3 7l9 6 9-6" />
+          </svg>
+        </span>
+        <AuthHeading title="Check your email">
+          We sent a verification email to <strong className="text-ink">{pending}</strong>. Click the link, or enter the 6-digit code if
+          the email shows one.
+        </AuthHeading>
+        {messages}
         <form
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
@@ -116,22 +161,12 @@ export function SignupForm() {
           }}
           className="flex flex-col gap-4"
         >
-          <label className={labelClass}>
-            6-digit code
-            <input
-              className={`${inputClass} tracking-[0.3em]`}
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-            />
-          </label>
+          <CodeInput label="6-digit code" value={code} onChange={setCode} />
           <button type="submit" disabled={busy || code.length !== 6} className={primaryBtn}>
-            Verify
+            {code.length === 6 ? "Verify" : "Enter all 6 digits"}
           </button>
         </form>
-        <div className="flex flex-wrap gap-4 text-sm">
+        <div className="flex flex-wrap justify-between gap-4 text-sm">
           <button
             type="button"
             disabled={busy}
@@ -141,34 +176,26 @@ export function SignupForm() {
                 setInfo("Sent again.");
               })
             }
-            className="min-h-11 font-bold text-pitch disabled:opacity-50"
+            className="min-h-11 font-bold text-muted hover:text-ink disabled:opacity-50"
           >
             Resend email
           </button>
-          <button type="button" onClick={() => setSentTo(null)} className="min-h-11 font-bold text-muted">
+          <button type="button" onClick={() => setSentTo(null)} className="min-h-11 font-bold text-pitch">
             Use a different email
           </button>
         </div>
-      </AuthCard>
+      </AuthLayout>
     );
   }
 
   // Step 1: details.
   return (
-    <AuthCard
-      title="Sign up"
-      subtitle={
-        <>
-          Already have an account? <Link href="/login/" className="font-bold text-pitch">Log in</Link>
-        </>
-      }
-    >
+    <AuthLayout variant="signup">
       <Steps current={1} />
-      {error && <Alert tone="error">{error}</Alert>}
-      <p className="text-sm text-ink-soft">
-        Save your teams, players and matches to an account so you can use them on any device. Everything you&apos;ve created on
-        this device comes with you.
-      </p>
+      <AuthHeading title="Create account">
+        Already have one? <Link href="/login/" className="font-bold text-pitch">Log in</Link>
+      </AuthHeading>
+      {messages}
       <form
         onSubmit={(e: FormEvent) => {
           e.preventDefault();
@@ -182,12 +209,15 @@ export function SignupForm() {
         </label>
         <label className={labelClass}>
           Email
-          <input className={inputClass} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input className={inputClass} type="email" autoComplete="email" placeholder="you@club.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <button type="submit" disabled={busy} className={primaryBtn}>
           {busy ? "Sending…" : "Send verification email"}
         </button>
       </form>
-    </AuthCard>
+      <p className="rounded-xl bg-pitch-tint px-3.5 py-3 text-[13px] leading-snug text-pitch">
+        <strong>Nothing gets lost.</strong> Teams and matches you created as a guest move into your new account.
+      </p>
+    </AuthLayout>
   );
 }
