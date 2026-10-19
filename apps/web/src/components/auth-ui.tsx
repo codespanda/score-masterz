@@ -48,7 +48,7 @@ export function AuthLayout({ variant, children }: { variant: keyof typeof PANELS
   return (
     <div className="flex min-h-screen flex-wrap bg-ground">
       <section aria-label="About Score Masterz" className="flex min-w-0 flex-[1_1_520px] flex-col gap-6 bg-scoreboard px-6 py-8 text-white sm:gap-10 sm:px-12 sm:py-10">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/" className="flex min-h-11 items-center gap-2.5 self-start">
           <svg width="36" height="36" viewBox="0 0 34 34" aria-hidden="true">
             <circle cx="17" cy="17" r="15" fill="#F2B705" />
             <path d="M8 9c5 4 5 12 0 16M26 9c-5 4-5 12 0 16" fill="none" stroke="#08291C" strokeWidth="2" strokeLinecap="round" />

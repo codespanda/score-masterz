@@ -19,6 +19,7 @@ import {
 import { teamColors } from "@score-masterz/tokens";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 
+import { EmptyState } from "@/components/empty-state";
 import { TeamBadge } from "@/components/team-badge";
 import { optimiseLogo } from "@/lib/optimise-logo";
 import { getSupabase } from "@/lib/supabase";
@@ -246,9 +247,9 @@ export function TeamsManager() {
           {teams === null ? (
             <p className="text-muted">Loading teams…</p>
           ) : teams.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-line bg-white p-6 text-muted">
-              No teams yet. Create the first one with the form.
-            </p>
+            <EmptyState icon="team" title="No teams yet">
+              Create your first team with the form, then add its players.
+            </EmptyState>
           ) : (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
               {teams.map((t) => (

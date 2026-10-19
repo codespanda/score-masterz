@@ -20,7 +20,7 @@ export const colors = {
   goldTint: "#FDF3D0",
   goldInk: "#6B4E00",
 
-  live: "#E2531B",
+  live: "#C2410C",
   wicket: "#B42318",
 } as const;
 
@@ -45,3 +45,19 @@ export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as cons
 
 /** Minimum touch target, in px / dp. */
 export const touchTarget = 44;
+
+/** Text colour that reads on a given background hex: dark ink on light colours, white on dark. */
+export function textOn(hex: string): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return colors.surface;
+  const n = parseInt(m[1]!, 16);
+  const lin = (c: number) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const L = 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+  // Pick whichever of white / scoreboard green gives more contrast.
+  const vsWhite = 1.05 / (L + 0.05);
+  const vsInk = (L + 0.05) / (0.0127 + 0.05);
+  return vsWhite >= vsInk ? colors.surface : colors.scoreboard;
+}

@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   muted: { color: colors.muted, fontSize: 13 },
   start: { minHeight: 52, borderRadius: radii.md, backgroundColor: colors.pitch, alignItems: 'center', justifyContent: 'center' },
   startText: { color: colors.surface, fontWeight: '700', fontSize: 16 },
-  link: { color: colors.pitch, fontWeight: '700', paddingVertical: 8 },
+  link: { color: colors.pitch, fontWeight: '700', paddingVertical: 12, minHeight: 44 },
   bannerWrap: { marginHorizontal: 20, marginTop: 8 },
   endButton: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   endText: { color: colors.wicket, fontWeight: '700' },

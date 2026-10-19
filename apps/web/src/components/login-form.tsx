@@ -82,7 +82,7 @@ export function LoginForm() {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-baseline justify-between">
             <label htmlFor="login-password" className="text-[13px] font-bold text-ink-soft">Password</label>
-            <button type="button" onClick={onForgot} disabled={busy} className="text-[13px] font-bold text-pitch disabled:opacity-50">
+            <button type="button" onClick={onForgot} disabled={busy} className="-my-3 inline-flex min-h-11 items-center text-[13px] font-bold text-pitch disabled:opacity-50">
               Forgot password?
             </button>
           </div>

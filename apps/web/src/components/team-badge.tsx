@@ -1,3 +1,5 @@
+import { textOn } from "@score-masterz/tokens";
+
 export function TeamBadge({
   code,
   color,
@@ -25,8 +27,8 @@ export function TeamBadge({
   }
   return (
     <span
-      className="grid shrink-0 place-items-center rounded-[10px] font-display font-bold text-white"
-      style={{ width: size, height: size, backgroundColor: color, fontSize: Math.round(size * 0.42) }}
+      className="grid shrink-0 place-items-center rounded-[10px] font-display font-bold"
+      style={{ width: size, height: size, backgroundColor: color, color: textOn(color), fontSize: Math.round(size * 0.42) }}
     >
       {code}
     </span>

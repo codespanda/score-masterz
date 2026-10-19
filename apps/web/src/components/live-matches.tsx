@@ -5,6 +5,7 @@ import { summariseInnings } from "@score-masterz/scoring";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { EmptyState } from "@/components/empty-state";
 import { LiveTag, TeamBadge } from "@/components/team-badge";
 import { useLiveBalls } from "@/hooks/use-live-balls";
 import { getSupabase } from "@/lib/supabase";
@@ -45,9 +46,13 @@ export function LiveMatches() {
   if (matches === null) return <p className="text-muted">Loading matches…</p>;
   if (matches.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-line bg-white p-6 text-muted">
-        No matches are being scored right now. Start one from the Score tab in the mobile app.
-      </p>
+      <EmptyState
+        icon="ball"
+        title="No live matches"
+        action={{ label: "Score a match", href: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/app/score`, external: true }}
+      >
+        Nobody is scoring right now. Start a match in the scorer app and it appears here ball by ball.
+      </EmptyState>
     );
   }
 

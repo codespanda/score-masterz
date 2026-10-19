@@ -1,4 +1,4 @@
-import { colors } from '@score-masterz/tokens';
+import { colors, textOn } from '@score-masterz/tokens';
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -20,7 +20,7 @@ export function TeamBadge({
   }
   return (
     <View style={[box, styles.code, { backgroundColor: color }]}>
-      <Text style={[styles.codeText, { fontSize: Math.round(size * 0.4) }]}>{code}</Text>
+      <Text style={[styles.codeText, { color: textOn(color), fontSize: Math.round(size * 0.4) }]}>{code}</Text>
     </View>
   );
 }
