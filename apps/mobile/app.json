@@ -48,6 +48,17 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "owner": "codespanda",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "f0a64458-31be-44cd-a7be-f4a173b6ec8f"
+      }
     }
   }
 }
